@@ -1,25 +1,23 @@
-// src/SwipeCard.jsx
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 import { forwardRef, useImperativeHandle } from 'react';
 
-const SwipeCard = forwardRef(({ movie, onSwipe, disabled }, ref) => {
+const SwipeCard = forwardRef(({ movie, onSwipe }, ref) => {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-20, 20]);
+
+  // Overlay opacities
+  const greenOverlayOpacity = useTransform(x, [0, 150], [0, 0.5]);
+  const redOverlayOpacity = useTransform(x, [-150, 0], [0.5, 0]);
 
   useImperativeHandle(ref, () => ({
     triggerSwipe(direction) {
       const to = direction === 'right' ? 600 : -600;
       animate(x, to, {
         duration: 0.3,
-        onComplete: () => onSwipe?.(direction, movie),
+        onComplete: () => onSwipe(direction, movie),
       });
     },
   }));
-
-  if (!movie) {
-    console.warn('⚠️ Kein Film übergeben an SwipeCard');
-    return null;
-  }
 
   const poster = movie.poster_path
     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
@@ -27,7 +25,7 @@ const SwipeCard = forwardRef(({ movie, onSwipe, disabled }, ref) => {
 
   return (
     <motion.div
-      drag={disabled ? false : 'x'}
+      drag="x"
       style={{
         x,
         rotate,
@@ -41,18 +39,39 @@ const SwipeCard = forwardRef(({ movie, onSwipe, disabled }, ref) => {
         backgroundPosition: 'center',
         boxShadow: '0 12px 24px rgba(0,0,0,0.3)',
         zIndex: 1,
+        overflow: 'hidden', // Clip overlays
       }}
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       onDragEnd={(e, info) => {
-        if (disabled) return;
-        if (info.offset.x > 150) onSwipe?.('right', movie);
-        else if (info.offset.x < -150) onSwipe?.('left', movie);
+        if (info.offset.x > 150) onSwipe('right', movie);
+        else if (info.offset.x < -150) onSwipe('left', movie);
       }}
-    />
+    >
+      {/* GREEN overlay */}
+      <motion.div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundColor: 'rgba(0, 255, 0, 0.8)',
+          opacity: greenOverlayOpacity,
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* RED overlay */}
+      <motion.div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundColor: 'rgba(255, 0, 0, 0.8)',
+          opacity: redOverlayOpacity,
+          pointerEvents: 'none',
+        }}
+      />
+    </motion.div>
   );
 });
 
 export default SwipeCard;
-
