@@ -1,4 +1,3 @@
-// src/App.jsx
 import React from 'react';
 import SwipeDeck from './SwipeDeck';
 import './App.css';
@@ -27,7 +26,8 @@ function App() {
   };
 
   return (
-    <div className="app">
+    <div className="app-container">
+      {/* Optional: <h1>🎬 MatchFlick</h1> */}
       <SwipeDeck movies={movies} onSwipe={handleSwipe} />
     </div>
   );

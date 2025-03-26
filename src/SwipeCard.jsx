@@ -6,7 +6,7 @@ function SwipeCard({ movie, onSwipe }) {
 
   const poster = movie.poster_path
     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-    : 'https://via.placeholder.com/500x750?text=No+Image';
+    : "https://via.placeholder.com/500x750?text=No+Image";
 
   return (
     <motion.div
@@ -14,9 +14,9 @@ function SwipeCard({ movie, onSwipe }) {
       style={{
         x,
         rotate,
+        width: '320px',
+        height: '480px',
         position: 'absolute',
-        width: '100%',
-        height: '100%',
         borderRadius: 16,
         backgroundColor: '#111',
         backgroundImage: `url(${poster})`,
@@ -25,14 +25,16 @@ function SwipeCard({ movie, onSwipe }) {
         boxShadow: '0 12px 24px rgba(0,0,0,0.3)',
         zIndex: 1,
       }}
-      initial={{ opacity: 0, scale: 0.95 }}
+	initial={{ opacity: 0, scale: 0.95, rotate: 0 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       onDragEnd={(e, info) => {
         if (info.offset.x > 150) onSwipe?.('right', movie);
         if (info.offset.x < -150) onSwipe?.('left', movie);
       }}
-    />
+    >
+      {/* Titel entfernen = dieses div komplett löschen */}
+    </motion.div>
   );
 }
 
