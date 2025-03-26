@@ -1,16 +1,12 @@
-const BASE_URL = 'https://api.themoviedb.org/3';
-const API_TOKEN = import.meta.env.VITE_TMDB_TOKEN;
-
-export async function getPopularMovies(page = 1) {
-  const res = await fetch(`${BASE_URL}/movie/popular?page=${page}&language=de-DE`, {
+// src/api/tmdb.js
+export async function getPopularMovies() {
+  const res = await fetch('https://api.themoviedb.org/3/movie/popular', {
     headers: {
-      Authorization: `Bearer ${API_TOKEN}`,
-      accept: 'application/json',
+      Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`,
+      'Content-Type': 'application/json',
     },
   });
-
-  if (!res.ok) throw new Error('TMDB fetch failed');
   const data = await res.json();
-  return data.results;
+  return data.results.filter((m) => m.poster_path); // nur mit Bild
 }
 

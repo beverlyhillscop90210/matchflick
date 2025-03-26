@@ -1,7 +1,8 @@
+// src/SwipeCard.jsx
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 import { forwardRef, useImperativeHandle } from 'react';
 
-const SwipeCard = forwardRef(({ movie, onSwipe }, ref) => {
+const SwipeCard = forwardRef(({ movie, onSwipe, disabled }, ref) => {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-20, 20]);
 
@@ -10,10 +11,15 @@ const SwipeCard = forwardRef(({ movie, onSwipe }, ref) => {
       const to = direction === 'right' ? 600 : -600;
       animate(x, to, {
         duration: 0.3,
-        onComplete: () => onSwipe(direction, movie),
+        onComplete: () => onSwipe?.(direction, movie),
       });
     },
   }));
+
+  if (!movie) {
+    console.warn('⚠️ Kein Film übergeben an SwipeCard');
+    return null;
+  }
 
   const poster = movie.poster_path
     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
@@ -21,7 +27,7 @@ const SwipeCard = forwardRef(({ movie, onSwipe }, ref) => {
 
   return (
     <motion.div
-      drag="x"
+      drag={disabled ? false : 'x'}
       style={{
         x,
         rotate,
@@ -40,8 +46,9 @@ const SwipeCard = forwardRef(({ movie, onSwipe }, ref) => {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       onDragEnd={(e, info) => {
-        if (info.offset.x > 150) onSwipe('right', movie);
-        else if (info.offset.x < -150) onSwipe('left', movie);
+        if (disabled) return;
+        if (info.offset.x > 150) onSwipe?.('right', movie);
+        else if (info.offset.x < -150) onSwipe?.('left', movie);
       }}
     />
   );

@@ -1,37 +1,39 @@
 // src/App.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import SwipeDeck from './SwipeDeck';
 import './App.css';
+import { getPopularMovies } from './api/tmdb';
 
 function App() {
   const [movies, setMovies] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [index, setIndex] = useState(0);
 
+  // Initial load
   useEffect(() => {
-    const fetchMovies = async () => {
-      const res = await fetch('https://api.themoviedb.org/3/movie/popular', {
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      const data = await res.json();
-      setMovies(data.results);
-    };
-
-    fetchMovies();
+    getPopularMovies().then(setMovies);
   }, []);
 
-  const handleSwipe = (direction, movie) => {
+  // 🔄 Swipe handler mit Lazy-Loading
+  const handleSwipe = useCallback((direction, movie) => {
     console.log(`Swiped ${direction} on "${movie.title}"`);
-    setCurrentIndex((prev) => prev + 1);
-  };
+    const nextIndex = index + 1;
+
+    // Wenn fast am Ende: neue Filme laden
+    if (nextIndex >= movies.length - 2) {
+      getPopularMovies().then((newMovies) => {
+        setMovies((prev) => [...prev, ...newMovies]);
+      });
+    }
+
+    setIndex(nextIndex);
+  }, [index, movies]);
 
   return (
     <div className="app">
       {movies.length > 0 && (
         <SwipeDeck
-          movies={movies.slice(currentIndex)}
+          movies={movies}
+          index={index}
           onSwipe={handleSwipe}
         />
       )}

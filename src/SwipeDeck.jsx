@@ -1,37 +1,11 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
+// src/SwipeDeck.jsx
+import { useRef, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import SwipeCard from './SwipeCard';
-import { getPopularMovies } from './api/tmdb'; // oder dein custom fetch
 
-function SwipeDeck({ onSwipe }) {
-  const [movies, setMovies] = useState([]);
-  const [index, setIndex] = useState(0);
+function SwipeDeck({ movies, index, onSwipe }) {
   const cardRef = useRef(null);
 
-  // 🌀 1. Filme beim Mount laden
-  useEffect(() => {
-    getPopularMovies().then(setMovies);
-  }, []);
-
-  // 🎯 2. Swipe logik
-  const handleSwipe = useCallback(
-    (direction, movie) => {
-      onSwipe?.(direction, movie);
-      const nextIndex = index + 1;
-
-      // Wenn fast am Ende: Neue Filme nachladen
-      if (nextIndex >= movies.length - 2) {
-        getPopularMovies().then((newMovies) => {
-          setMovies((prev) => [...prev, ...newMovies]);
-        });
-      }
-
-      setIndex(nextIndex);
-    },
-    [index, movies, onSwipe]
-  );
-
-  // ⌨️ 3. Tastatursteuerung
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (!cardRef.current) return;
@@ -56,7 +30,6 @@ function SwipeDeck({ onSwipe }) {
         transform: 'translate(-50%, -50%)',
       }}
     >
-      {/* 🧊 Nächste Karte im Hintergrund (leicht sichtbar) */}
       {nextMovie && (
         <div
           style={{
@@ -73,13 +46,12 @@ function SwipeDeck({ onSwipe }) {
         </div>
       )}
 
-      {/* 🔥 Aktuelle Karte mit Interaktion */}
       <AnimatePresence mode="wait">
         {currentMovie && (
           <SwipeCard
             key={`${currentMovie.id}-${index}`}
             movie={currentMovie}
-            onSwipe={handleSwipe}
+            onSwipe={onSwipe}
             ref={(el) => (cardRef.current = el)}
           />
         )}
