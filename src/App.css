@@ -35,7 +35,10 @@ html, body {
 }
 
 .app {
-  width: 200rem;
-  height: 80rem;
+  width: 330px;            /* gleiche Breite wie deine SwipeCard */
+  height: 480px;           /* gleiche Höhe wie deine SwipeCard */
   position: relative;
 }
+
+
+

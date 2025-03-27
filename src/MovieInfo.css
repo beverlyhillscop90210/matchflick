@@ -1,16 +1,142 @@
-/* src/MovieInfo.css */
 .movie-info {
     position: absolute;
-    bottom: -3.5rem;
+    bottom: -6rem;
     left: 50%;
     transform: translateX(-50%);
-    width: 100%;
-    max-width: 320px;
-    text-align: center;
+    width: 320px;
     color: white;
+    text-align: left;
+    font-family: system-ui, sans-serif;
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 400;
     z-index: 10;
+    pointer-events: auto;
+  }
+  
+  .movie-info .gradient-underlay {
+    position: absolute;
+    bottom: 0;
+    left: -20vw;
+    width: 140vw;
+    height: 45rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.92), transparent);
+    z-index: 1;
+    opacity: 0;
     pointer-events: none;
+    will-change: opacity;
+    transform: translateZ(0);
+    transition: opacity 0.5s ease 0.25s;
+  }
+  
+  .movie-info.expanded .gradient-underlay {
+    opacity: 1;
+  }
+  
+  .movie-title,
+  .movie-subinfo,
+  .rating {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .movie-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0;
+    padding-left: 1rem;
+  }
+  
+  .movie-subinfo {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    padding-left: 1rem;
+    opacity: 0.85;
+  }
+  
+  .genre, .director {
+    white-space: nowrap;
+  }
+  
+  .dot {
+    opacity: 0.5;
+  }
+  
+  .rating {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.3rem 1rem -1rem;
+  }
+  
+  .star {
+    font-size: 1rem;
+    color: #FFD700;
+  }
+  
+  .star.empty {
+    color: #444;
+    opacity: 0.4;
+  }
+  
+  .rating-number {
+    font-size: 0.85rem;
+    opacity: 0.8;
+  }
+  
+  .movie-description {
+    position: relative;
+    font-size: 0.9rem;
+    color: white;
+    max-height: 4.0rem;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 13px;
+    padding: 1rem;
+    background-color: transparent;
+    transition: max-height 0.5s ease-in-out;
+    z-index: 2;
+  }
+  
+  .movie-description::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 3;
+  }
+  
+  .movie-description.expanded::after {
+    opacity: 0;
+  }
+  
+  .movie-description.expanded {
+    max-height: 16rem;
+  }
+  
+  .description-scroll {
+    max-height: 100%;
+    overflow-y: auto;
+    padding-top: 0.2rem;
+    scrollbar-width: thin;
+    scrollbar-color: #666 transparent;
+  }
+  
+  .description-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  .description-scroll::-webkit-scrollbar-thumb {
+    background: #666;
+    border-radius: 6px;
+  }
+  
+  .movie-description.collapsed .description-scroll {
+    overflow: hidden;
   }
   

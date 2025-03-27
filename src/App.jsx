@@ -3,6 +3,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import SwipeDeck from './SwipeDeck';
 import './App.css';
 import './MovieInfo.css';
+import MovieInfo from './MovieInfo';
 import { getPopularMovies } from './api/tmdb';
 
 function App() {
@@ -26,8 +27,6 @@ function App() {
     setIndex(nextIndex);
   }, [index, movies]);
 
-  const currentMovie = movies[index];
-
   return (
     <div className="app-wrapper">
       <div className="app">
@@ -38,16 +37,13 @@ function App() {
               index={index}
               onSwipe={handleSwipe}
             />
-            {currentMovie && (
-              <div className="movie-info">
-                {currentMovie.title}
-              </div>
-            )}
+            <MovieInfo movie={movies[index]} />
           </>
         )}
       </div>
     </div>
   );
 }
+
 
 export default App;
