@@ -1,0 +1,16 @@
+/* src/MovieInfo.css */
+.movie-info {
+    position: absolute;
+    bottom: -3.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    z-index: 10;
+    pointer-events: none;
+  }
+  

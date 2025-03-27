@@ -1,13 +1,16 @@
+// src/SwipeCard.jsx
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 import { forwardRef, useImperativeHandle } from 'react';
+
+const SWIPE_THRESHOLD = 150;
 
 const SwipeCard = forwardRef(({ movie, onSwipe }, ref) => {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-20, 20]);
 
-  // Overlay opacities
-  const greenOverlayOpacity = useTransform(x, [0, 150], [0, 0.5]);
-  const redOverlayOpacity = useTransform(x, [-150, 0], [0.5, 0]);
+  // Overlay-Transparenzen
+  const greenOverlayOpacity = useTransform(x, [0, SWIPE_THRESHOLD], [0, 0.5]);
+  const redOverlayOpacity = useTransform(x, [-SWIPE_THRESHOLD, 0], [0.5, 0]);
 
   useImperativeHandle(ref, () => ({
     triggerSwipe(direction) {
@@ -45,11 +48,17 @@ const SwipeCard = forwardRef(({ movie, onSwipe }, ref) => {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       onDragEnd={(e, info) => {
-        if (info.offset.x > 150) onSwipe('right', movie);
-        else if (info.offset.x < -150) onSwipe('left', movie);
+        if (info.offset.x > SWIPE_THRESHOLD) {
+          onSwipe('right', movie);
+        } else if (info.offset.x < -SWIPE_THRESHOLD) {
+          onSwipe('left', movie);
+        } else {
+          // Wenn Swipe zu schwach → zurück zur Mitte
+          animate(x, 0, { type: 'spring', stiffness: 300 });
+        }
       }}
     >
-      {/* GREEN overlay */}
+      {/* ✅ GRÜN-Overlay bei „Like“ */}
       <motion.div
         style={{
           position: 'absolute',
@@ -60,7 +69,7 @@ const SwipeCard = forwardRef(({ movie, onSwipe }, ref) => {
         }}
       />
 
-      {/* RED overlay */}
+      {/* ❌ ROT-Overlay bei „Nope“ */}
       <motion.div
         style={{
           position: 'absolute',
