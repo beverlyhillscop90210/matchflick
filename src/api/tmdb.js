@@ -6,12 +6,14 @@ const headers = {
   'Content-Type': 'application/json',
 };
 
+// 📥 Beliebte Filme (Basisdaten)
 export async function getPopularMovies() {
   const res = await fetch(`${BASE_URL}/movie/popular`, { headers });
   const data = await res.json();
   return data.results.filter((m) => m.poster_path);
 }
 
+// 📦 Details + Credits für einen Film
 export async function getMovieDetails(movieId) {
   const res = await fetch(`${BASE_URL}/movie/${movieId}?append_to_response=credits`, {
     headers,
@@ -19,6 +21,7 @@ export async function getMovieDetails(movieId) {
   return await res.json();
 }
 
+// 🔁 Kombinieren: Basisdaten + Detaildaten
 export async function getPopularMoviesWithDetails() {
   const movies = await getPopularMovies();
 
@@ -28,7 +31,7 @@ export async function getPopularMoviesWithDetails() {
         const details = await getMovieDetails(movie.id);
         return { ...movie, ...details };
       } catch (err) {
-        console.error(`❌ Fehler bei Movie ID ${movie.id}:`, err);
+        console.error(`Fehler bei Movie ID ${movie.id}:`, err);
         return movie;
       }
     })

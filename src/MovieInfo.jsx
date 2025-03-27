@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './MovieInfo.css';
 
+// Genre-ID zu Namen Mapping
 const genreMap = {
   28: 'Action',
   12: 'Adventure',
@@ -28,33 +29,42 @@ function MovieInfo({ movie }) {
 
   if (!movie) return null;
 
+  // ✅ Debug-Ausgaben zum Checken
+  console.log('🎬 Movie:', movie);
+  console.log('🎥 Crew:', movie.credits?.crew);
+
+  // Sterne-Rating
   const rating = movie.vote_average || 0;
   const fullStars = Math.floor(rating / 2);
   const halfStar = rating % 2 >= 1;
   const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
 
-  // ✅ Genre aus genre_ids ODER genres.name ODER Fallback
+  // Genre-Name aus genre_ids oder genres.name
   const genreName =
     movie.genres?.[0]?.name ||
     genreMap[movie.genre_ids?.[0]] ||
     'Genre';
 
-  // ✅ Regisseur aus credits.crew (wenn vorhanden)
+  // Regisseur aus Crew finden
   const director =
     movie.credits?.crew?.find((person) => person.job === 'Director')?.name || 'TBD';
 
   return (
     <div className={`movie-info ${expanded ? 'expanded' : ''}`}>
+      {/* Gradient über dem Bild */}
       <div className="gradient-underlay" />
 
+      {/* Titel */}
       <div className="movie-title">{movie.title}</div>
 
+      {/* Subinfo: Genre & Director */}
       <div className="movie-subinfo">
         <span className="genre">{genreName}</span>
         <span className="dot">·</span>
-        <span className="director">Director: {director}</span>
+        <span className="director">{director}</span>
       </div>
 
+      {/* Sterne-Bewertung */}
       <div className="rating">
         <span>
           {[...Array(fullStars)].map((_, i) => (
@@ -68,6 +78,7 @@ function MovieInfo({ movie }) {
         <span className="rating-number">{rating.toFixed(1)}</span>
       </div>
 
+      {/* Beschreibung + Text-Gradient */}
       <div
         className={`movie-description ${expanded ? 'expanded' : 'collapsed'}`}
         onClick={() => setExpanded(!expanded)}

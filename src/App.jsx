@@ -1,17 +1,17 @@
-// src/App.jsx
 import React, { useEffect, useState, useCallback } from 'react';
 import SwipeDeck from './SwipeDeck';
 import './App.css';
 import './MovieInfo.css';
 import MovieInfo from './MovieInfo';
-import { getPopularMovies } from './api/tmdb';
+import { getPopularMoviesWithDetails } from './api/tmdb';
 
 function App() {
   const [movies, setMovies] = useState([]);
   const [index, setIndex] = useState(0);
+  const [visibleIndex, setVisibleIndex] = useState(0); // ← extra Anzeige-Index
 
   useEffect(() => {
-    getPopularMovies().then(setMovies);
+    getPopularMoviesWithDetails().then(setMovies);
   }, []);
 
   const handleSwipe = useCallback((direction, movie) => {
@@ -19,12 +19,17 @@ function App() {
     const nextIndex = index + 1;
 
     if (nextIndex >= movies.length - 2) {
-      getPopularMovies().then((newMovies) => {
+      getPopularMoviesWithDetails().then((newMovies) => {
         setMovies((prev) => [...prev, ...newMovies]);
       });
     }
 
     setIndex(nextIndex);
+
+    // 👇 Verzögere die Anzeige der neuen MovieInfo
+    setTimeout(() => {
+      setVisibleIndex(nextIndex);
+    }, 200); // 200ms – kannst du noch feinjustieren
   }, [index, movies]);
 
   return (
@@ -37,13 +42,12 @@ function App() {
               index={index}
               onSwipe={handleSwipe}
             />
-            <MovieInfo movie={movies[index]} />
+            <MovieInfo movie={movies[visibleIndex]} />
           </>
         )}
       </div>
     </div>
   );
 }
-
 
 export default App;
